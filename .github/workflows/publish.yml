@@ -1,0 +1,22 @@
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        platform: [macos-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: pyinstaller
+        run: |
+          brew install python3
+          pip3 install pyinstaller
+          pyinstaller -F backup.py
+          tar -zcvf backup.tgz dist
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: backup.tgz
+          path: backup.tgz
